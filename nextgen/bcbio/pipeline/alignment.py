@@ -141,6 +141,11 @@ def get_genome_ref(genome_build, aligner, galaxy_base):
                     if parts[0] == genome_build:
                         cur_ref = parts[-1]
                         break
+                    # @TODO Ideally check dbkey 
+                    # but (sometimes the second column)
+                    if parts[1] == genome_build:
+                        cur_ref = parts[-1]
+                        break
         if cur_ref is None:
             raise IndexError("Genome %s not found in %s" % (genome_build,
                 ref_file))

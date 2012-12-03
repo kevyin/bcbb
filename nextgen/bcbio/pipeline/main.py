@@ -12,6 +12,7 @@ from bcbio.log import setup_logging
 from bcbio.distributed.messaging import parallel_runner
 from bcbio.pipeline.run_info import get_run_info
 from bcbio.pipeline.demultiplex import add_multiplex_across_lanes
+from bcbio.pipeline.lane import parse_lane
 from bcbio.pipeline.merge import organize_samples
 from bcbio.pipeline.qcsummary import write_metrics, write_project_summary
 from bcbio.variation.realign import parallel_realign_sample
@@ -36,24 +37,36 @@ def run_main(config, config_file, work_dir, parallel,
     config = _set_resources(parallel, config)
     run_parallel = parallel_runner(parallel, dirs, config, config_file)
 
-    # process each flowcell lane
-    run_items = add_multiplex_across_lanes(run_info["details"], dirs["fastq"], fc_name)
-    lanes = ((info, fc_name, fc_date, dirs, config) for info in run_items)
-    lane_items = run_parallel("process_lane", lanes)
+    ## process each flowcell lane
+    #run_items = add_multiplex_across_lanes(run_info["details"], dirs["fastq"], fc_name)
+    #lanes = ((info, fc_name, fc_date, dirs, config) for info in run_items)
+    #lane_items = run_parallel("process_lane", lanes)
+
+    lane_items = parse_lane(run_info["details"], fc_name, fc_date, dirs, config)
+    
+    #for item in lane_items:
+        #utils.prettyprint_dict(item)
+
     align_items = run_parallel("process_alignment", lane_items)
-    # process samples, potentially multiplexed across multiple lanes
-    samples = organize_samples(align_items, dirs, config_file)
-    samples = run_parallel("merge_sample", samples)
-    samples = run_parallel("recalibrate_sample", samples)
-    samples = parallel_realign_sample(samples, run_parallel)
-    samples = parallel_variantcall(samples, run_parallel)
-    samples = run_parallel("postprocess_variants", samples)
-    samples = combine_multiple_callers(samples)
-    samples = run_parallel("detect_sv", samples)
-    run_parallel("process_sample", samples)
-    run_parallel("generate_bigwig", samples, {"programs": ["ucsc_bigwig"]})
-    write_project_summary(samples)
-    write_metrics(run_info, fc_name, fc_date, dirs)
+
+    ## process samples, potentially multiplexed across multiple lanes
+    #samples = organize_samples(align_items, dirs, config_file)
+    #samples = run_parallel("merge_sample", samples)
+    #samples = run_parallel("recalibrate_sample", samples)
+    #samples = parallel_realign_sample(samples, run_parallel)
+    #samples = parallel_variantcall(samples, run_parallel)
+    #samples = run_parallel("postprocess_variants", samples)
+    #samples = combine_multiple_callers(samples)
+    #samples = run_parallel("detect_sv", samples)
+    #run_parallel("process_sample", samples)
+    #run_parallel("generate_bigwig", samples, {"programs": ["ucsc_bigwig"]})
+    #write_project_summary(samples)
+    #write_metrics(run_info, fc_name, fc_date, dirs)
+
+
+
+
+
 
 def _set_resources(parallel, config):
     """Set resource availability for programs based on parallel approach.

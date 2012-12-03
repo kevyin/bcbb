@@ -8,6 +8,7 @@ import collections
 
 import pysam
 
+from bcbio.log import logger
 from bcbio import broad
 from bcbio.utils import file_exists, safe_makedir
 from bcbio.distributed.transaction import file_transaction
@@ -36,6 +37,7 @@ def get_fastq_files(directory, work_dir, item, fc_name, bc_name=None,
     ready_files = []
     for fname in files:
         if fname.endswith(".gz"):
+            logger.info("Running gunzip for %s" % fname)
             cl = ["gunzip", fname]
             subprocess.check_call(cl)
             ready_files.append(os.path.splitext(fname)[0])

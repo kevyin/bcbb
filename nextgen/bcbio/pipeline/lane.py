@@ -56,6 +56,26 @@ def process_lane(lane_items, fc_name, fc_date, dirs, config):
                             dirs, config))
     return out
 
+def parse_lane(run_items, fc_name, fc_date, dirs, config):
+    """As opposed to process lanes. Parse the lane information from the
+       runinfo yaml.
+       Used for runs processed with Illumina's bcl2fastq which are already demultiplexed
+    """
+    logger.info("Already demultiplexed. Parsing run info")
+    lane_items = []
+    for xs in run_items:
+        for item in xs:
+            config = _update_config_w_custom(config, item)
+            fastq1, fastq2 = get_fastq_files(dirs["fastq"], dirs["work"],
+                    item, fc_name)
+            # parse illumina output name format
+            (sample_name, barcode_seq, lane, read_num, set_num) = os.path.basename(fastq1).split("_")
+
+            lane_name = "%s_%s_%s" % (lane, fc_date, fc_name)
+            lane_desc = item["description"]
+            lane_items.append((fastq1, fastq2, item, lane_name, lane_desc, dirs, config))
+    return lane_items
+
 
 def process_alignment(fastq1, fastq2, info, lane_name, lane_desc,
                       dirs, config):
