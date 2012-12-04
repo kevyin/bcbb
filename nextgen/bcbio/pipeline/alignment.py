@@ -29,7 +29,8 @@ _tools = {
     "mosaik": NgsTool(mosaik.align, mosaik.galaxy_location_file, None),
     "novoalign": NgsTool(novoalign.align, bowtie.galaxy_location_file, novoalign.remap_index_fn),
     "tophat": NgsTool(tophat.align, tophat.galaxy_location_file, None),
-    "samtools": NgsTool(None, "sam_fa_indices.loc", None),
+    #"samtools": NgsTool(None, "sam_fa_indices.loc", None),
+    "samtools": NgsTool(None, "picard_index.loc", None)
     }
 
 def align_to_sort_bam(fastq1, fastq2, genome_build, aligner,
