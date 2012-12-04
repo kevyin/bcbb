@@ -21,9 +21,11 @@ def run_and_monitor(config, config_file, args, parallel):
     try:
         print "Starting manager"
         manager_id = start_analysis_manager(cluster, args, config)
+        print "Manager id: " + str(manager_id)
         time.sleep(60)
         print "Starting cluster workers"
         jobids.extend(start_workers(cluster, config, config_file, parallel))
+        print "Worker ids: " + str(jobids)
         jobids.append(manager_id)
         while not(cluster.are_running(jobids)):
             time.sleep(5)

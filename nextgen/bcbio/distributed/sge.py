@@ -9,7 +9,7 @@ _jobid_pat = re.compile('Your job (?P<jobid>\d+) \("')
 def submit_job(scheduler_args, command):
     """Submit a job to the scheduler, returning the supplied job ID.
     """
-    cl = ["qsub", "-cwd", "-b", "y", "-j", "y"] + scheduler_args + command
+    cl = ["qsub", "-V", "-cwd", "-j", "y", "-b", "y"] + scheduler_args + command
     status = subprocess.check_output(cl)
     match = _jobid_pat.search(status)
     return match.groups("jobid")[0]

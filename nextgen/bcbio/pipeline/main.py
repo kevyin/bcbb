@@ -50,8 +50,8 @@ def run_main(config, config_file, work_dir, parallel,
     align_items = run_parallel("process_alignment", lane_items)
 
     ## process samples, potentially multiplexed across multiple lanes
-    #samples = organize_samples(align_items, dirs, config_file)
-    #samples = run_parallel("merge_sample", samples)
+    samples = organize_samples(align_items, dirs, config_file)
+    samples = run_parallel("merge_sample", samples)
     #samples = run_parallel("recalibrate_sample", samples)
     #samples = parallel_realign_sample(samples, run_parallel)
     #samples = parallel_variantcall(samples, run_parallel)
