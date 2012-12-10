@@ -8,7 +8,7 @@ import argparse
 
 from bcbio.solexa.flowcell import get_fastq_dir
 from bcbio import utils
-from bcbio.log import setup_logging
+from bcbio.log import (setup_logging, logger)
 from bcbio.distributed.messaging import parallel_runner
 from bcbio.pipeline.run_info import get_run_info
 from bcbio.pipeline.demultiplex import add_multiplex_across_lanes
@@ -52,18 +52,31 @@ def run_main(config, config_file, work_dir, parallel,
 
     ## process samples, potentially multiplexed across multiple lanes
     samples = organize_samples(align_items, dirs, config_file)
+    logger.info (">>> Merge samples")
     samples = run_parallel("merge_sample", samples)
+    logger.info (">>> Recalibrate samples")
     samples = run_parallel("recalibrate_sample", samples)
-    #samples = parallel_realign_sample(samples, run_parallel)
-    #samples = parallel_variantcall(samples, run_parallel)
-    #samples = run_parallel("postprocess_variants", samples)
-    #samples = combine_multiple_callers(samples)
-    #samples = run_parallel("detect_sv", samples)
-    #samples = run_parallel("combine_calls", samples)
-    #run_parallel("process_sample", samples)
-    #run_parallel("generate_bigwig", samples, {"programs": ["ucsc_bigwig"]})
-    #write_project_summary(samples)
-    #write_metrics(run_info, fc_name, fc_date, dirs)
+    logger.info (">>> realign sample")
+    samples = parallel_realign_sample(samples, run_parallel)
+    logger.info (">>> variantcall")
+    samples = parallel_variantcall(samples, run_parallel)
+    logger.info (">>> postprocess_variatns")
+    samples = run_parallel("postprocess_variants", samples)
+    logger.info (">>> combine_multiple_calles")
+    samples = combine_multiple_callers(samples)
+    logger.info (">>> detect_sv")
+    samples = run_parallel("detect_sv", samples)
+    logger.info (">>> combine_calls")
+    samples = run_parallel("combine_calls", samples)
+    logger.info (">>> process_sample")
+    run_parallel("process_sample", samples)
+    logger.info (">>> Generate bigwig")
+    run_parallel("generate_bigwig", samples, {"programs": ["ucsc_bigwig"]})
+    logger.info (">>> Writing project summary")
+    write_project_summary(samples)
+    logger.info (">>> Writing metrics")
+    write_metrics(run_info, fc_name, fc_date, dirs)
+    logger.info (">>> Done")
 
 
 def _set_resources(parallel, config):
