@@ -58,12 +58,13 @@ def _flatten_plus_safe(rollback_files):
     """Flatten names of files and create temporary file names.
     """
     tx_files, orig_files = [], []
-    var_tmp = "/var/tmp"
+    #var_tmp = "/var/tmp"
     for fnames in rollback_files:
         if isinstance(fnames, basestring):
             fnames = [fnames]
         for fname in fnames:
-            basedir = utils.safe_makedir(os.path.join(var_tmp,os.path.relpath(os.path.dirname(fname), "/"), "tx"))
+            #basedir = utils.safe_makedir(os.path.join(os.path.relpath(os.path.dirname(fname), "/"), "tx"))
+            basedir = utils.safe_makedir(os.path.join(os.path.dirname(fname), "tx"))
             tmpdir = utils.safe_makedir(tempfile.mkdtemp(dir=basedir))
             tx_file = os.path.join(tmpdir, os.path.basename(fname))
             tx_files.append(tx_file)
