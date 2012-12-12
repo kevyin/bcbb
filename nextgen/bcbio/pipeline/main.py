@@ -43,11 +43,13 @@ def run_main(config, config_file, work_dir, parallel,
     #lanes = ((info, fc_name, fc_date, dirs, config) for info in run_items)
     #lane_items = run_parallel("process_lane", lanes)
 
+    logger.info (">>> Parse lane")
     lane_items = parse_lane(run_info["details"], fc_name, fc_date, dirs, config)
     
     #for item in lane_items:
         #utils.prettyprint_dict(item)
 
+    logger.info (">>> Process alignment")
     align_items = run_parallel("process_alignment", lane_items)
 
     ## process samples, potentially multiplexed across multiple lanes
