@@ -35,5 +35,6 @@ setup(name = "bcbio-nextgen",
           "ipython >= 0.13.1",
           "paramiko >= 1.9.0",
           "celery >= 2.2.7",
+          "cython",
           #"rpy2 >= 2.0.7"
       ])
