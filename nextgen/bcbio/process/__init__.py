@@ -5,6 +5,7 @@ import sys
 import inspect
 from bcbio.log import logger_subprocess
 import subprocess
+from functools import wraps
 
 subprocess_logged = sys.modules[__name__]
 
