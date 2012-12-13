@@ -14,10 +14,6 @@ logger = logging.getLogger(LOG_NAME)
 logger_subprocess = logging.getLogger(LOG_NAME_SUBPROCESS)
 
 def setup_logging(config):
-    logger.setLevel(logging.INFO)
-    logger_subprocess.setLevel(logging.INFO)
-    _setup(logger, LOG_NAME)
-    _setup(logger_subprocess, LOG_NAME_SUBPROCESS)
 
     def _setup(thislogger, logger_name):
         if not thislogger.handlers:
@@ -32,6 +28,11 @@ def setup_logging(config):
                 handler = logging.FileHandler(logfile)
                 handler.setFormatter(formatter)
                 thislogger.addHandler(handler)
+
+    logger.setLevel(logging.INFO)
+    logger_subprocess.setLevel(logging.INFO)
+    _setup(logger, LOG_NAME)
+    _setup(logger_subprocess, LOG_NAME_SUBPROCESS)
 
 import logbook
 logger2 = logbook.Logger(LOG_NAME)
