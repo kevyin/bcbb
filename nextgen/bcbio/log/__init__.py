@@ -8,23 +8,30 @@ import logging
 from bcbio import utils
 
 LOG_NAME = "nextgen_pipeline"
+LOG_NAME_SUBPROCESS = "nextgen_pipeline_subprocess_calls"
 
 logger = logging.getLogger(LOG_NAME)
+logger_subprocess = logging.getLogger(LOG_NAME_SUBPROCESS)
 
 def setup_logging(config):
     logger.setLevel(logging.INFO)
-    if not logger.handlers:
-        formatter = logging.Formatter('[%(asctime)s] %(message)s')
-        handler = logging.StreamHandler()
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
-        log_dir = config.get("log_dir", None)
-        if log_dir:
-            logfile = os.path.join(utils.safe_makedir(log_dir),
-                                   "{0}.log".format(LOG_NAME))
-            handler = logging.FileHandler(logfile)
+    logger_subprocess.setLevel(logging.INFO)
+    _setup(logger, LOG_NAME)
+    _setup(logger_subprocess, LOG_NAME_SUBPROCESS)
+
+    def _setup(thislogger, logger_name):
+        if not thislogger.handlers:
+            formatter = logging.Formatter('[%(asctime)s] %(message)s')
+            handler = logging.StreamHandler()
             handler.setFormatter(formatter)
-            logger.addHandler(handler)
+            thislogger.addHandler(handler)
+            log_dir = config.get("log_dir", None)
+            if log_dir:
+                logfile = os.path.join(utils.safe_makedir(log_dir),
+                                       "{0}.log".format(logger_name))
+                handler = logging.FileHandler(logfile)
+                handler.setFormatter(formatter)
+                thislogger.addHandler(handler)
 
 import logbook
 logger2 = logbook.Logger(LOG_NAME)
