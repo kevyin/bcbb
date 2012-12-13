@@ -3,6 +3,7 @@
 import os
 import glob
 import subprocess
+from bcbio.process import subprocess_logged
 import contextlib
 import collections
 
@@ -39,7 +40,7 @@ def get_fastq_files(directory, work_dir, item, fc_name, bc_name=None,
         if fname.endswith(".gz"):
             logger.info("Running gunzip for %s" % fname)
             cl = ["gunzip", fname]
-            subprocess.check_call(cl)
+            subprocess_logged.check_call(cl)
             ready_files.append(os.path.splitext(fname)[0])
         elif fname.endswith(".bam"):
             print config["algorithm"]["aligner"]

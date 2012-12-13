@@ -5,6 +5,7 @@
 """
 import os
 import subprocess
+from bcbio.process import subprocess_logged
 from contextlib import closing
 
 from bcbio.broad import picardrun
@@ -47,7 +48,7 @@ class BroadRunner:
         options.append("VALIDATION_STRINGENCY=SILENT")
         dist_file = self._get_jar(command)
         cl = ["java"] + self._memory_args +["-jar", dist_file] + options
-        subprocess.check_call(cl)
+        subprocess_logged.check_call(cl)
 
     def run_gatk(self, params, tmp_dir=None):
         support_nt = set(["UnifiedGenotyper", "CountCovariates", "VariantEval"])
@@ -70,14 +71,14 @@ class BroadRunner:
         cl = ["java"] + self._memory_args + local_args + \
                 ["-jar", gatk_jar] + [str(x) for x in params]
         #print " ".join(cl)
-        subprocess.check_call(cl)
+        subprocess_logged.check_call(cl)
 
     def has_gatk_full(self):
         """Check if we have the full GATK jar, including non-open source parts.
         """
         gatk_jar = self._get_jar("GenomeAnalysisTK", ["GenomeAnalysisTKLite"])
         cl = ["java", "-jar", gatk_jar, "-h"]
-        with closing(subprocess.Popen(cl, stdout=subprocess.PIPE).stdout) as stdout:
+        with closing(subprocess_logged.Popen(cl, stdout=subprocess.PIPE).stdout) as stdout:
             for line in stdout:
                 if line.strip().startswith("HaplotypeCaller"):
                     return True

@@ -5,6 +5,7 @@ processed together.
 """
 import os
 import subprocess
+from bcbio.process import subprocess_logged
 
 
 from bcbio.utils import file_exists, save_diskspace
@@ -91,6 +92,6 @@ def generate_bigwig(data):
         with file_transaction(wig_file) as tx_file:
             cl = [data["config"]["analysis"]["towig_script"], bam_file,
                   data["config_file"], "--outfile=%s" % tx_file]
-            subprocess.check_call(cl)
+            subprocess_logged.check_call(cl)
     return [[data]]
 

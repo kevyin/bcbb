@@ -8,6 +8,7 @@ import os
 import copy
 import collections
 import subprocess
+from bcbio.process import subprocess_logged
 from contextlib import nested, closing
 
 import pysam
@@ -115,7 +116,7 @@ def convert_bam_to_bed(in_bam, out_file):
     """
     with file_transaction(out_file) as tx_out_file:
         with open(tx_out_file, "w") as out_handle:
-            subprocess.check_call(["bamToBed", "-i", in_bam, "-tag", "NM"],
+            subprocess_logged.check_call(["bamToBed", "-i", in_bam, "-tag", "NM"],
                                   stdout=out_handle)
     return out_file
 
@@ -123,7 +124,7 @@ def convert_bam_to_bed(in_bam, out_file):
 def pair_discordants(in_bed, pair_stats, out_file):
     with file_transaction(out_file) as tx_out_file:
         with open(tx_out_file, "w") as out_handle:
-            subprocess.check_call(["pairDiscordants.py", "-i", in_bed,
+            subprocess_logged.check_call(["pairDiscordants.py", "-i", in_bed,
                                    "-m", "hydra",
                                    "-z", str(int(pair_stats["median"]) +
                                              10 * int(pair_stats["mad"]))],
@@ -134,7 +135,7 @@ def pair_discordants(in_bed, pair_stats, out_file):
 def dedup_discordants(in_bed, out_file):
     with file_transaction(out_file) as tx_out_file:
         with open(tx_out_file, "w") as out_handle:
-            subprocess.check_call(["dedupDiscordants.py", "-i", in_bed, "-s", "3"],
+            subprocess_logged.check_call(["dedupDiscordants.py", "-i", in_bed, "-s", "3"],
                                   stdout=out_handle)
     return out_file
 
@@ -142,7 +143,7 @@ def run_hydra(in_bed, pair_stats):
     base_out = "{}-hydra.breaks".format(os.path.splitext(in_bed)[0])
     final_file = "{}.final".format(base_out)
     if not utils.file_exists(final_file):
-        subprocess.check_call(["hydra", "-in", in_bed, "-out", base_out,
+        subprocess_logged.check_call(["hydra", "-in", in_bed, "-out", base_out,
                                "-ms", "1", "-li",
                                "-mld", str(int(pair_stats["mad"]) * 10),
                                "-mno", str(int(pair_stats["median"]) +

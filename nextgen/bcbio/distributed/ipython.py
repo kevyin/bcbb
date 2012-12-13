@@ -17,13 +17,14 @@ import contextlib
 
 from bcbio import utils
 from bcbio.log import setup_logging, logger
+from bcbio.process import subprocess_logged
 
 from IPython.parallel import Client
 
 def _start(workers_needed, profile, cluster_id, delay):
     """Starts cluster from commandline.
     """
-    subprocess.check_call(["ipcluster", "start",
+    subprocess_logged.check_call(["ipcluster", "start",
                            "--daemonize=True",
                            "--delay=%s" % delay,
                            "--log-level=%s" % "WARN",
@@ -32,7 +33,7 @@ def _start(workers_needed, profile, cluster_id, delay):
                            "--profile=%s" % profile])
 
 def _stop(profile, cluster_id):
-    subprocess.check_call(["ipcluster", "stop", "--profile=%s" % profile,
+    subprocess_logged.check_call(["ipcluster", "stop", "--profile=%s" % profile,
                            #"--cluster-id=%s" % cluster_id
                            ])
 

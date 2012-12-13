@@ -4,6 +4,7 @@ http://bioinformatics.bc.edu/marthlab/Mosaik
 """
 import os
 import subprocess
+from bcbio.process import subprocess_logged
 
 from bcbio.utils import file_exists
 from bcbio.distributed.transaction import file_transaction
@@ -35,7 +36,7 @@ def _convert_fastq(fastq_file, pair_file, rg_name, out_file, config):
             if rg_name:
                 cl += ["-id", rg_name]
             env_set = "export MOSAIK_TMP={0}".format(os.path.dirname(tx_out_file))
-            subprocess.check_call(env_set + " && " + " ".join(cl), shell=True)
+            subprocess_logged.check_call(env_set + " && " + " ".join(cl), shell=True)
     return out_file
 
 def _get_mosaik_nn_args(out_file):
@@ -47,7 +48,7 @@ def _get_mosaik_nn_args(out_file):
                        ("-annpe", "2.1.26.pe.100.0065.ann")]:
         arg_fname = os.path.join(os.path.dirname(out_file), fname)
         if not file_exists(arg_fname):
-            subprocess.check_call(["wget", "-O", arg_fname, base_nn_url + fname])
+            subprocess_logged.check_call(["wget", "-O", arg_fname, base_nn_url + fname])
         out += [arg, arg_fname]
     return out
 
@@ -77,7 +78,7 @@ def align(fastq_file, pair_file, ref_file, out_base, align_dir, config,
                     cl += ["-hs", "13"]
             cl += _get_mosaik_nn_args(out_file)
             env_set = "export MOSAIK_TMP={0}".format(os.path.dirname(tx_out_file))
-            subprocess.check_call(env_set + " && "+
+            subprocess_logged.check_call(env_set + " && "+
                                   " ".join([str(x) for x in cl]), shell=True)
             os.remove(built_fastq)
     return out_file

@@ -2,6 +2,7 @@
 """
 import os
 import subprocess
+from bcbio.process import subprocess_logged
 
 from bcbio.utils import file_exists
 from bcbio.distributed.transaction import file_transaction
@@ -46,6 +47,6 @@ def align(fastq_file, pair_file, ref_file, out_base, align_dir, config,
                 cl += [fastq_file]
             cl += [tx_out_file]
             cl = [str(i) for i in cl]
-            subprocess.check_call(cl)
+            subprocess_logged.check_call(cl)
     return out_file
 

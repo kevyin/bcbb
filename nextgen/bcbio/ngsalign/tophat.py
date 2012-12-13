@@ -5,6 +5,7 @@ http://tophat.cbcb.umd.edu
 import os
 import shutil
 import subprocess
+from bcbio.process import subprocess_logged
 from contextlib import closing
 
 import pysam
@@ -59,7 +60,7 @@ def align(fastq_file, pair_file, ref_file, out_base, align_dir, config,
                        "--mate-std-dev", str(d_stdev)]
                 files.append(pair_file)
             cl += files
-            child = subprocess.check_call(cl)
+            child = subprocess_logged.check_call(cl)
     out_file_final = os.path.join(out_dir, "%s.sam" % out_base)
     if not os.path.exists(out_file_final):
         os.symlink(out_file, out_file_final)

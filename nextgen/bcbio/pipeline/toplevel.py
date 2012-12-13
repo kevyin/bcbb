@@ -6,6 +6,7 @@ and upload of results back to Galaxy.
 import os
 import re
 import subprocess
+from bcbio.process import subprocess_logged
 
 import yaml
 # Fabric only needed on running side, not on setup and initial import
@@ -92,7 +93,7 @@ def _run_analysis(fc_dir, remote_info, config, config_file):
         cl = [prog, config_file, fc_dir]
         if run_yaml:
             cl.append(run_yaml)
-        subprocess.check_call(cl)
+        subprocess_logged.check_call(cl)
     return analysis_dir
 
 def _get_run_yaml(remote_info, fc_dir, config):
@@ -116,4 +117,4 @@ def _upload_to_galaxy(fc_dir, analysis_dir, remote_info, config, config_file):
               analysis_dir]
         if run_yaml:
             cl.append(run_yaml)
-        subprocess.check_call(cl)
+        subprocess_logged.check_call(cl)

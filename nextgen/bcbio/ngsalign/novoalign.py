@@ -2,6 +2,7 @@
 """
 import os
 import subprocess
+from bcbio.process import subprocess_logged
 
 from bcbio.log import logger
 from bcbio.utils import (memoize_outfile, file_exists)
@@ -15,7 +16,7 @@ def refindex(ref_file, kmer_size=None, step_size=None, out_file=None):
     if step_size:
         cl += ["-s", str(step_size)]
     cl += [out_file, ref_file]
-    subprocess.check_call(cl)
+    subprocess_logged.check_call(cl)
 
 def _novoalign_args_from_config(config):
     """Select novoalign options based on configuration parameters.
@@ -55,7 +56,7 @@ def align(fastq_file, pair_file, ref_file, out_base, align_dir, config,
         with file_transaction(out_file) as tx_out_file:
             with open(tx_out_file, "w") as out_handle:
                 logger.info(" ".join([str(x) for x in cl]))
-                subprocess.check_call([str(x) for x in cl], stdout=out_handle)
+                subprocess_logged.check_call([str(x) for x in cl], stdout=out_handle)
     return out_file
 
 def remap_index_fn(ref_file):

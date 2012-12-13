@@ -6,6 +6,7 @@ Supported:
 import os
 import csv
 import subprocess
+from bcbio.process import subprocess_logged
 
 from bcbio.utils import file_exists
 from bcbio.distributed.transaction import file_transaction
@@ -66,7 +67,7 @@ def _run_snpeff(snp_in, genome, se_interval, out_format, config):
         print " ".join(cl)
         with file_transaction(out_file) as tx_out_file:
             with open(tx_out_file, "w") as out_handle:
-                subprocess.check_call(cl, stdout=out_handle)
+                subprocess_logged.check_call(cl, stdout=out_handle)
     return out_file
 
 def _vcf_has_items(in_file):

@@ -4,6 +4,7 @@ http://samtools.sourceforge.net/mpileup.shtml
 """
 import os
 import subprocess
+from bcbio.process import subprocess_logged
 
 import sh
 

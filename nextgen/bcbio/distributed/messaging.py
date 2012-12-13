@@ -9,6 +9,7 @@ import time
 import contextlib
 import multiprocessing
 import subprocess
+from bcbio.process import subprocess_logged
 
 from mako.template import Template
 
@@ -115,7 +116,7 @@ def cores_including_resources(cores, metadata, config):
 def _machine_memory():
     """Retrieve available memory on current machine using 'free.'
     """
-    with contextlib.closing(subprocess.Popen(["free", "-g"],
+    with contextlib.closing(subprocess_logged.Popen(["free", "-g"],
                                              stdout=subprocess.PIPE).stdout) as stdout:
         for line in stdout:
             if line.startswith("Mem:"):

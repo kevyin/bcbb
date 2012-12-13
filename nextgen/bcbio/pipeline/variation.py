@@ -3,6 +3,7 @@
 import os
 import json
 import subprocess
+from bcbio.process import subprocess_logged
 
 from bcbio.variation.recalibrate import gatk_recalibrate
 from bcbio.variation.genotype import variant_filtration, gatk_evaluate_variants
@@ -34,7 +35,7 @@ def _analyze_recalibration(recal_file, fastq1, fastq2, dirs, config):
         cl.append(fastq2)
     cl.append("--workdir=%s" % dirs["work"])
     cl.append("--input_format=%s" % qual_opts[qual_format])
-    subprocess.check_call(cl)
+    subprocess_logged.check_call(cl)
 
 # ## Genotyping
 

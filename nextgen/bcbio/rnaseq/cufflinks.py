@@ -4,6 +4,7 @@ http://cufflinks.cbcb.umd.edu/manual.html
 """
 import os
 import subprocess
+from bcbio.process import subprocess_logged
 
 from bcbio.pipeline.variation import configured_ref_file
 
@@ -30,6 +31,6 @@ def assemble_transcripts(align_file, ref_file, config):
         cl += ["-M", tx_mask_file]
     out_tx_file = os.path.join(out_dir, "transcripts.gtf")
     if not os.path.exists(out_tx_file):
-        subprocess.check_call(cl)
+        subprocess_logged.check_call(cl)
     assert os.path.exists(out_tx_file)
     return out_tx_file

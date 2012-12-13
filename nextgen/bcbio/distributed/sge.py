@@ -3,6 +3,7 @@
 import re
 import time
 import subprocess
+from bcbio.process import subprocess_logged
 
 _jobid_pat = re.compile('Your job (?P<jobid>\d+) \("')
 
@@ -10,13 +11,13 @@ def submit_job(scheduler_args, command):
     """Submit a job to the scheduler, returning the supplied job ID.
     """
     cl = ["qsub", "-V", "-cwd", "-j", "y", "-b", "y"] + scheduler_args + command
-    status = subprocess.check_output(cl)
+    status = subprocess_logged.check_output(cl)
     match = _jobid_pat.search(status)
     return match.groups("jobid")[0]
 
 def stop_job(jobid):
     cl = ["qdel", jobid]
-    subprocess.check_call(cl)
+    subprocess_logged.check_call(cl)
 
 def are_running(jobids):
     """Check if submitted job IDs are running.
@@ -26,7 +27,7 @@ def are_running(jobids):
     tried = 0
     while 1:
         try:
-            run_info = subprocess.check_output(["qstat"])
+            run_info = subprocess_logged.check_output(["qstat"])
             break
         except:
             tried += 1
@@ -46,7 +47,7 @@ def available_nodes(scheduler_args):
     """Retrieve a count of available nodes in the configured queue.
     """
     cl = ["qstat", "-f"]
-    info = subprocess.check_output(cl)
+    info = subprocess_logged.check_output(cl)
     total = 0
     for i, line in enumerate(info.split("\n")):
         if i > 1 and not line.startswith("----") and line.startswith(tuple(scheduler_args)):

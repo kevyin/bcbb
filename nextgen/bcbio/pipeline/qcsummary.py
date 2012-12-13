@@ -5,6 +5,7 @@ import csv
 import copy
 import glob
 import subprocess
+from bcbio.process import subprocess_logged
 import xml.etree.ElementTree as ET
 
 import yaml
@@ -56,7 +57,7 @@ def _generate_pdf(graphs, summary, overrep, bam_file, sample_name,
         out_handle.write(out_tmpl.render(parts=[section]))
     if config["algorithm"].get("write_summary", True):
         cl = [config.get("program", {}).get("pdflatex", "pdflatex"), out_file]
-        subprocess.check_call(cl)
+        subprocess_logged.check_call(cl)
     return "%s.pdf" % os.path.splitext(out_file)[0]
 
 def _graphs_and_summary(bam_file, sam_ref, is_paired, tmp_dir, config):
@@ -214,7 +215,7 @@ def _run_fastqc(bam_file, config):
     if not os.path.exists(fastqc_out):
         cl = [config.get("program", {}).get("fastqc", "fastqc"),
               "-o", out_base, "-f", "bam", bam_file]
-        subprocess.check_call(cl)
+        subprocess_logged.check_call(cl)
     if os.path.exists("%s.zip" % fastqc_out):
         os.remove("%s.zip" % fastqc_out)
     return fastqc_out

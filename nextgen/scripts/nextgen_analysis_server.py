@@ -28,6 +28,7 @@ from bcbio import utils
 from bcbio.distributed.messaging import create_celeryconfig
 from bcbio.pipeline.config_loader import load_config
 from bcbio.log import logger, setup_logging
+from bcbio.process import subprocess_logged
 
 def main(config_file, queues=None, task_module=None, base_dir=None):
     if base_dir is None:
@@ -57,7 +58,7 @@ def run_celeryd(work_dir, queues):
         cl = ["celeryd"]
         if queues:
             cl += ["-Q", queues]
-        subprocess.check_call(cl)
+        subprocess_logged.check_call(cl)
 
 if __name__ == "__main__":
     parser = optparse.OptionParser()

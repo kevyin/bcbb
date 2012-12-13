@@ -2,6 +2,7 @@
 """
 import re
 import subprocess
+from bcbio.process import subprocess_logged
 
 _jobid_pat = re.compile("Job <(?P<jobid>\d+)> is")
 
@@ -15,7 +16,7 @@ def submit_job(scheduler_args, command):
 
 def stop_job(jobid):
     cl = ["bkill", jobid]
-    subprocess.check_call(cl)
+    subprocess_logged.check_call(cl)
 
 def are_running(jobids):
     """Check if all of the submitted job IDs are running.

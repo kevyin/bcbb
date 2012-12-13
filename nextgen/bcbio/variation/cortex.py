@@ -10,6 +10,7 @@ http://cortexassembler.sourceforge.net/index_cortex_var.html
 import os
 import glob
 import subprocess
+from bcbio.process import subprocess_logged
 import itertools
 import shutil
 from contextlib import closing
@@ -208,7 +209,7 @@ def _run_cortex(fastq, indexes, params, out_base, dirs, config):
     if len(kmers) > 1:
         kmer_info += ["--last_kmer", str(kmers[-1]),
                       "--kmer_step", str(kmers[1] - kmers[0])]
-    subprocess.check_call(["perl", os.path.join(dirs["cortex"], "scripts", "calling", "run_calls.pl"),
+    subprocess_logged.check_call(["perl", os.path.join(dirs["cortex"], "scripts", "calling", "run_calls.pl"),
                            "--fastaq_index", fastaq_index,
                            "--auto_cleaning", "yes", "--bc", "yes", "--pd", "yes",
                            "--outdir", os.path.dirname(out_base), "--outvcf", os.path.basename(out_base),
@@ -257,7 +258,7 @@ def _index_local_ref(fasta_file, cortex_dir, stampy_dir, kmers):
             file_list = "{0}.se_list".format(base_out)
             with open(file_list, "w") as out_handle:
                 out_handle.write(fasta_file + "\n")
-            subprocess.check_call([_get_cortex_binary(kmer, cortex_dir),
+            subprocess_logged.check_call([_get_cortex_binary(kmer, cortex_dir),
                                    "--kmer_size", str(kmer), "--mem_height", "17",
                                    "--se_list", file_list, "--format", "FASTA",
                                    "--max_read_len", "30000",
@@ -265,9 +266,9 @@ def _index_local_ref(fasta_file, cortex_dir, stampy_dir, kmers):
                                    "--dump_binary", out_file])
         cindexes.append(out_file)
     if not file_exists("{0}.stidx".format(base_out)):
-        subprocess.check_call([os.path.join(stampy_dir, "stampy.py"), "-G",
+        subprocess_logged.check_call([os.path.join(stampy_dir, "stampy.py"), "-G",
                                base_out, fasta_file])
-        subprocess.check_call([os.path.join(stampy_dir, "stampy.py"), "-g",
+        subprocess_logged.check_call([os.path.join(stampy_dir, "stampy.py"), "-g",
                                base_out, "-H", base_out])
     return {"stampy": base_out,
             "cortex": cindexes,

@@ -5,6 +5,7 @@ http://bioinformatics.bc.edu/marthlab/FreeBayes
 import os
 import shutil
 import subprocess
+from bcbio.process import subprocess_logged
 
 from bcbio import broad
 from bcbio.utils import file_exists
@@ -41,7 +42,7 @@ def run_freebayes(align_bam, ref_file, config, dbsnp=None, region=None,
                   "-b", align_bam, "-v", tx_out_file, "-f", ref_file,
                   "--left-align-indels", "--use-mapping-quality"]
             cl += _freebayes_options_from_config(config["algorithm"], out_file, region)
-            subprocess.check_call(cl)
+            subprocess_logged.check_call(cl)
     _remove_freebayes_refalt_dups(out_file)
     return out_file
 
