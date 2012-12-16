@@ -12,6 +12,7 @@ import tempfile
 import contextlib
 
 from bcbio import utils
+from bcbio.log import logger
 
 @contextlib.contextmanager
 def file_transaction(*rollback_files):
@@ -19,6 +20,7 @@ def file_transaction(*rollback_files):
     """
     exts = {".vcf": ".idx", ".bam": ".bai"}
     safe_names, orig_names = _flatten_plus_safe(rollback_files)
+    logger.debug("func file_transaction: safe_names %s, orig_names %s" % safe_names, orig_names)
     _remove_files(safe_names) # remove any half-finished transactions
     try:
         if len(safe_names) == 1:
@@ -26,10 +28,12 @@ def file_transaction(*rollback_files):
         else:
             yield tuple(safe_names)
     except: # failure -- delete any temporary files
+        logger.debug("func file_transaction: UNsuccessful file transaction: safe_names %s, orig_names %s" % safe_names, orig_names)
         _remove_files(safe_names)
         _remove_tmpdirs(safe_names)
         raise
     else: # worked -- move the temporary files to permanent location
+        logger.debug("func file_transaction: successful file transaction: safe_names %s, orig_names %s" % safe_names, orig_names)
         for safe, orig in zip(safe_names, orig_names):
             if os.path.exists(safe):
                 shutil.move(safe, orig)
@@ -38,6 +42,7 @@ def file_transaction(*rollback_files):
                         safe_idx = safe + check_idx
                         if os.path.exists(safe_idx):
                             shutil.move(safe_idx, orig + check_idx)
+        logger.debug("func file_transaction: successful file transaction: removing tmpdirs: safe_names %s" % safe_names)
         _remove_tmpdirs(safe_names)
 
 def _remove_tmpdirs(fnames):

@@ -12,7 +12,8 @@ LOG_NAME = "nextgen_pipeline"
 logger = logging.getLogger(LOG_NAME)
 
 def setup_logging(config):
-    logger.setLevel(logging.INFO)
+    logger.setLevel(logging.DEBUG)
+    #logger.setLevel(logging.INFO)
     if not logger.handlers:
         formatter = logging.Formatter('[%(asctime)s] %(message)s')
         handler = logging.StreamHandler()
