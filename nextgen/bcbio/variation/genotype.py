@@ -37,8 +37,11 @@ def _shared_gatk_call_prep(align_bam, ref_file, config, dbsnp, region, out_file)
         out_file = "%s-variants.vcf" % os.path.splitext(align_bam)[0]
     region = subset_variant_regions(variant_regions, region, out_file)
 
+    bfh = config["resources"]["gatk"].get("max_bam_file_handle",1024)
+
     params = ["-I", align_bam,
               "-R", ref_file,
+              "-bfh", str(bfh),
               "--annotation", "QualByDepth",
               "--annotation", "HaplotypeScore",
               "--annotation", "MappingQualityRankSumTest",
